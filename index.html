@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Start Campaign - CampAIgn Genie</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+  <form id="campaignForm" class="bg-white p-8 rounded-lg shadow-lg w-full max-w-xl space-y-5">
+    <h2 class="text-3xl font-bold text-center text-blue-700">Start a Campaign</h2>
+
+    <label class="block text-gray-700 font-semibold">Campaign Prompt</label>
+    <textarea name="prompt" rows="5" required
+      class="w-full p-3 border rounded-md border-gray-300 focus:ring focus:ring-blue-300"></textarea>
+
+    <button type="submit"
+      class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition">Submit</button>
+
+    <p id="responseMessage" class="text-center text-green-600 text-sm hidden">Campaign submitted successfully!</p>
+  </form>
+
+  <script>
+    const form = document.getElementById('campaignForm');
+    const responseMessage = document.getElementById('responseMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      const res = await fetch('http://localhost:5678/webhook/start-campaign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (res.ok) {
+        responseMessage.classList.remove('hidden');
+        form.reset();
+      } else {
+        alert("Something went wrong. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>

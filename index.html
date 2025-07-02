@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Start Campaign - CampAIgn Genie</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -10,24 +10,58 @@
   <form id="campaignForm" class="bg-white p-8 rounded-lg shadow-lg w-full max-w-xl space-y-5">
     <h2 class="text-3xl font-bold text-center text-blue-700">Start a Campaign</h2>
 
-    <label class="block text-gray-700 font-semibold">Campaign Prompt</label>
-    <textarea name="prompt" rows="5" required
-      class="w-full p-3 border rounded-md border-gray-300 focus:ring focus:ring-blue-300"></textarea>
+    <label class="block text-gray-700 font-semibold">Select List</label>
+    <select id="listSelect" name="list_id" required class="w-full p-3 border rounded-md border-gray-300 focus:ring focus:ring-blue-300"></select>
 
-    <button type="submit"
-      class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition">Submit</button>
+    <label class="block text-gray-700 font-semibold">Select Segment</label>
+    <select id="segmentSelect" name="segment_id" required class="w-full p-3 border rounded-md border-gray-300 focus:ring focus:ring-blue-300"></select>
+
+    <label class="block text-gray-700 font-semibold">Select Email Template</label>
+    <select id="templateSelect" name="template_id" required class="w-full p-3 border rounded-md border-gray-300 focus:ring focus:ring-blue-300"></select>
+
+    <label class="block text-gray-700 font-semibold">Campaign Prompt</label>
+    <textarea name="prompt" id="prompt" rows="5" required class="w-full p-3 border rounded-md border-gray-300 focus:ring focus:ring-blue-300" placeholder="Describe your campaign..."></textarea>
+
+    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition">Submit</button>
   </form>
 
   <script>
-    const form = document.getElementById('campaignForm');
+    const optionsUrl = 'http://localhost:5678/webhook/get-options';
+    const startCampaignUrl = 'http://localhost:5678/webhook/start-campaign';
 
+    const listSelect = document.getElementById('listSelect');
+    const templateSelect = document.getElementById('templateSelect');
+    const segmentSelect = document.getElementById('segmentSelect');
+
+    // Fetch options on page load
+    fetch(optionsUrl)
+      .then(response => response.json())
+      .then(data => {
+        populateSelect(listSelect, data[0].json.lists, 'Select a List');
+        populateSelect(templateSelect, data[1].json.templates, 'Select a Template');
+        populateSelect(segmentSelect, data[2].json.segments, 'Select a Segment');
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Error fetching options from server.');
+      });
+
+    function populateSelect(select, options, placeholder) {
+      select.innerHTML = `<option value="">${placeholder}</option>`;
+      options.forEach(opt => {
+        select.innerHTML += `<option value="${opt.value}">${opt.name}</option>`;
+      });
+    }
+
+    // Form submission
+    const form = document.getElementById('campaignForm');
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
 
-      const res = await fetch('http://localhost:5678/webhook/start-campaign', {
+      const res = await fetch(startCampaignUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

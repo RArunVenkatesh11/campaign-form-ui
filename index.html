@@ -36,11 +36,16 @@
     // Fetch options on page load
     fetch(optionsUrl)
       .then(response => response.json())
-      .then(data => {
-        populateSelect(listSelect, data[0].json.lists, 'Select a List');
-        populateSelect(templateSelect, data[1].json.templates, 'Select a Template');
-        populateSelect(segmentSelect, data[2].json.segments, 'Select a Segment');
-      })
+     .then(data => {
+  const lists = data.find(d => d.json && d.json.lists)?.json.lists || [];
+  const templates = data.find(d => d.json && d.json.templates)?.json.templates || [];
+  const segments = data.find(d => d.json && d.json.segments)?.json.segments || [];
+
+  populateSelect(listSelect, lists, 'Select a List');
+  populateSelect(templateSelect, templates, 'Select a Template');
+  populateSelect(segmentSelect, segments, 'Select a Segment');
+})
+
       .catch(err => {
         console.error(err);
         alert('Error fetching options from server.');

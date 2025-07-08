@@ -38,8 +38,8 @@
       .then(response => response.json())
       .then(data => {
     const lists = data.listOptions || [];
-    const templates = data.templateOptions || [];
-    const segments = data.segmentOptions || [];
+    const templates = data.templates || [];
+    const segments = data.segments || [];
 
     populateSelect(listSelect, lists, 'Select a List');
     populateSelect(templateSelect, templates, 'Select a Template');

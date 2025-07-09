@@ -63,12 +63,19 @@
       e.preventDefault();
 
       const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
+      //const data = Object.fromEntries(formData.entries());
+     const payload = {
+        list_id: formData.get("list"),
+        segment_id: formData.get("segment"),
+        template_id: formData.get("template"),
+        campaign_prompt: formData.get("prompt")
+      };
+
 
       const res = await fetch(startCampaignUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(payload)
       });
 
       if (res.ok) {

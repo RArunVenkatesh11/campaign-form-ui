@@ -64,13 +64,12 @@
 
       const formData = new FormData(form);
       //const data = Object.fromEntries(formData.entries());
-     const payload = {
-        list_id: formData.get("list"),
-        segment_id: formData.get("segment"),
-        template_id: formData.get("template"),
-        campaign_prompt: formData.get("prompt")
-      };
-
+   const payload = {
+  list_id: formData.get("list_id"),
+  segment_id: formData.get("segment_id"),
+  template_id: formData.get("template_id"),
+  campaign_prompt: formData.get("prompt")
+};
 
       const res = await fetch(startCampaignUrl, {
         method: 'POST',
